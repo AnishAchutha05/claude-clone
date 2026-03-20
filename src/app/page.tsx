@@ -161,7 +161,7 @@ function ChatsView({
                 style={{ color: "var(--text-secondary)" }}>
                 {projectContext
                   ? `You're in the "${projectContext}" project. Ask anything related.`
-                  : "Powered by your local LLM. What's on your mind?"}
+                  : "Powered by Gemini API. What's on your mind?"}
               </p>
             </div>
           </div>
@@ -186,7 +186,7 @@ function ChatsView({
         </div>
         <p className="text-xs text-center animate-fade-in-up delay-400" style={{ color: "var(--text-muted)" }}
           suppressHydrationWarning>
-          Running locally via Ollama · use the model selector to switch models
+          Running via Gemini API · use the model selector to switch models
         </p>
       </div>
     </>
@@ -199,7 +199,7 @@ export default function HomePage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activePage, setActivePage] = useState<Page>("chats");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [selectedModel, setSelectedModel] = useState("qwen2.5-coder:1.5b");
+  const [selectedModel, setSelectedModel] = useState("gemini-1.5-flash");
   const [isLoading, setIsLoading] = useState(false);
   const [projectContext, setProjectContext] = useState<string | undefined>();
 
@@ -254,12 +254,16 @@ export default function HomePage() {
     abortRef.current = new AbortController();
 
     try {
+      const capfolioSettingsRaw = localStorage.getItem("capfolio_settings");
+      const apiKey = capfolioSettingsRaw ? JSON.parse(capfolioSettingsRaw).geminiApiKey : "";
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         signal: abortRef.current.signal,
         body: JSON.stringify({
           model: selectedModel,
+          apiKey: apiKey,
           messages: [...contextPrefix, ...newMessages.map(m => ({ role: m.role, content: m.content }))],
         }),
       });
@@ -306,7 +310,7 @@ export default function HomePage() {
       if (err instanceof Error && err.name === "AbortError") return;
       setMessages(prev => {
         const updated = [...prev];
-        updated[assistantIdx] = { role: "assistant", content: "⚠️ Could not reach the model. Make sure Ollama is running (`ollama serve`).", streaming: false };
+        updated[assistantIdx] = { role: "assistant", content: "⚠️ Could not reach the model. Make sure you have set a valid Gemini API Key in Settings.", streaming: false };
         return updated;
       });
     } finally {

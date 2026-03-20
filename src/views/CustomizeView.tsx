@@ -29,17 +29,19 @@ const SECTIONS = [
   {
     label: "Account", icon: User, color: "#7C5CBF",
     settings: [
+      { key: "geminiApiKey", title: "Gemini API Key", description: "Your API key for Google Gemini", type: "password" },
       { key: "lang", title: "Language", description: "Interface and response language", type: "select", options: ["English", "Spanish", "French", "German", "Japanese"] },
       { key: "timezone", title: "Timezone", description: "Used for scheduling and timestamps", type: "select", options: ["Asia/Kolkata (IST)", "UTC", "America/New_York", "Europe/London"] },
     ],
   },
 ] as const;
 
-type SettingKey = "theme" | "fontSize" | "history" | "improve" | "email" | "desktop" | "lang" | "timezone";
+type SettingKey = "theme" | "fontSize" | "history" | "improve" | "email" | "desktop" | "lang" | "timezone" | "geminiApiKey";
 
 const DEFAULTS: Record<SettingKey, string | boolean> = {
   theme: "Dark (Warm)", fontSize: "Medium", history: true, improve: false,
   email: true, desktop: false, lang: "English", timezone: "Asia/Kolkata (IST)",
+  geminiApiKey: "",
 };
 
 const FONT_SIZE_MAP: Record<string, string> = { Small: "13px", Medium: "15px", Large: "17px" };
@@ -147,6 +149,13 @@ export default function CustomizeView() {
                 {setting.type === "toggle" ? (
                   <Toggle on={values[setting.key as SettingKey] as boolean}
                     onToggle={() => updateValue(setting.key as SettingKey, !values[setting.key as SettingKey])} />
+                ) : setting.type === "password" ? (
+                  <input type="password"
+                    value={values[setting.key as SettingKey] as string}
+                    onChange={e => updateValue(setting.key as SettingKey, e.target.value)}
+                    placeholder="Enter API Key"
+                    className="px-3 py-1.5 rounded-lg text-sm outline-none"
+                    style={{ background: "rgba(255,255,255,0.06)", color: "var(--text-primary)", border: "1px solid rgba(255,255,255,0.1)", width: "220px" }} />
                 ) : (
                   <select value={values[setting.key as SettingKey] as string}
                     onChange={e => updateValue(setting.key as SettingKey, e.target.value)}
