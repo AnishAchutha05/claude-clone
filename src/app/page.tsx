@@ -199,7 +199,7 @@ export default function HomePage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activePage, setActivePage] = useState<Page>("chats");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [selectedModel, setSelectedModel] = useState("gemini-1.5-flash");
+  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash");
   const [isLoading, setIsLoading] = useState(false);
   const [projectContext, setProjectContext] = useState<string | undefined>();
 

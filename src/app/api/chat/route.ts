@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, model = "gemini-1.5-flash", apiKey } = await req.json();
+    const { messages, model = "gemini-2.5-flash", apiKey } = await req.json();
 
     if (!apiKey) {
       return new Response(
